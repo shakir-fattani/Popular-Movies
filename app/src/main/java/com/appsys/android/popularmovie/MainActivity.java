@@ -12,12 +12,15 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.appsys.android.popularmovie.classes.Movie;
+import com.appsys.android.popularmovie.classes.MovieDbException;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements MovieAdapter.MovieAdapterOnClickHandler {
@@ -26,6 +29,8 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
     MovieAdapter mMovieAdapter;
     TextView mErrorTextView;
     ProgressBar mProgressBar;
+    Toast mToast;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,6 +68,13 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         startActivity(i);
     }
 
+    public void showMessage(String message) {
+        if (mToast != null)
+            mToast.cancel();
+
+        mToast = Toast.makeText(this, message, Toast.LENGTH_LONG);
+        mToast.show();
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -101,7 +113,6 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
                 mErrorTextView.setVisibility(View.VISIBLE);
                 break;
         }
-
     }
 
     @Override
@@ -113,6 +124,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
     public class FetchMovieTask extends AsyncTask<Integer, Void, ArrayList<Movie>> {
 
         boolean mPopular = true;
+        String mErrorMessage = "";
         public FetchMovieTask(boolean popular) {
             mPopular = popular;
         }
@@ -124,36 +136,39 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
 
         @Override
         protected ArrayList<Movie> doInBackground(Integer... integers) {
-            /* If there's no zip code, there's nothing to look up. */
             if (integers.length == 0)
                 return null;
 
             try {
-                String jsonResponse;
+                JSONObject json;
                 if (mPopular)
-                    jsonResponse = NetworkUtils.getPopularMovies(1);
+                    json = NetworkUtils.getPopularMovies(1);
                 else
-                    jsonResponse = NetworkUtils.getTopRatedMovies(1);
+                    json = NetworkUtils.getTopRatedMovies(1);
 
-                if (jsonResponse != null && !jsonResponse.equals(""))
-                {
-                    JSONObject json = new JSONObject(jsonResponse);
-                    if (json.has("results")) {
-                        JSONArray ja = json.getJSONArray("results");
-                        return Movie.getArrayByJSON(ja);
-                    }
+                if (json.has("results")) {
+                    JSONArray ja = json.getJSONArray("results");
+                    return Movie.getArrayByJSON(ja);
                 }
-                return null;
-            } catch (Exception e) {
+            } catch (MovieDbException e) {
+                mErrorMessage = e.getMessage();
                 e.printStackTrace();
-                return null;
+            } catch (IOException e) {
+                mErrorMessage = "Please check your Internet connection";
+                e.printStackTrace();
+            } catch (Exception e) {
+                mErrorMessage = "Main: " + e.getMessage();
+                e.printStackTrace();
             }
+
+            return null;
         }
 
         @Override
         protected void onPostExecute(ArrayList<Movie> movies) {
             if (movies == null) {
                 setUI(ViewEnum.Error);
+                showMessage(mErrorMessage);
             } else {
                 setUI(ViewEnum.Data);
                 mMovieAdapter.setMoviesData(movies);

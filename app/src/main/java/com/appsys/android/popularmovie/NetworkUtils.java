@@ -4,6 +4,11 @@ import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.appsys.android.popularmovie.classes.MovieDbException;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -20,7 +25,7 @@ public class NetworkUtils {
     private static final String TAG = NetworkUtils.class.getSimpleName();
     private static final String MOVIE_BASE_URL = "https://api.themoviedb.org/3/";
     private static final String LANGUAGE = "en-us";
-    private static final String API_KEY = "[YOUR API KEY]";
+    private static final String API_KEY = "[YOUR_API_KEY]";
     private static final String MOVIE_POSTER_BASE_URL = "http://image.tmdb.org/t/p/";
 
     public static final String THUMB_BASE_URL = MOVIE_POSTER_BASE_URL + "/w342";
@@ -30,25 +35,36 @@ public class NetworkUtils {
         return "movie/" + path + "?api_key=" + API_KEY + "&language=" + LANGUAGE + "&page=" + String.valueOf(page);
     }
 
-    public static String getPopularMovies(int page) throws IOException {
+    public static JSONObject getPopularMovies(int page) throws IOException, MovieDbException {
         return getMovies("popular", page);
     }
 
-    public static String getTopRatedMovies(int page) throws IOException {
+    public static JSONObject getTopRatedMovies(int page) throws IOException, MovieDbException {
         return getMovies("top_rated", page);
     }
 
-    public static String getMovies(String path,int page) throws IOException {
+    public static JSONObject getMovies(String path, int page) throws IOException, MovieDbException {
         String str = getPath(path, page);
         URL url = getUrl(str);
         if (url != null) {
             String response = getResult(url);
             if (response != null && !response.equals("")) {
-                return response;
+                try {
+                    JSONObject json = new JSONObject(response);
+                    if (json.has("success") && !json.getBoolean("success")){
+                        if (json.has("status_message"))
+                            throw new MovieDbException(json.getString("status_message"));
+
+                        throw new MovieDbException("Api Error");
+                    }
+                    return json;
+                } catch (JSONException e) {
+                    throw new MovieDbException("Api response is not compatible with the app");
+                }
             }
         }
 
-        return "";
+        throw new MovieDbException("Api address could not found");
     }
 
     private static URL getUrl(String query) {
