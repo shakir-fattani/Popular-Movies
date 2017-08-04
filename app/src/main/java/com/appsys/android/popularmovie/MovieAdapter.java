@@ -62,7 +62,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
         void bind(Movie m) {
             Picasso p = Picasso.with(mImageView.getContext());
 //            p.setIndicatorsEnabled(true);
-            p.load(m.getPoster()).placeholder(R.mipmap.ic_launcher).error(R.drawable.not_found).into(mImageView);
+            p.load(m.getPoster()).placeholder(R.mipmap.ic_launcher).error(R.mipmap.not_found).into(mImageView);
         }
 
         @Override

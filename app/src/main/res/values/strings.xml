@@ -3,5 +3,6 @@
     <string name="error_message">An error has occurred. Please try again by clicking REFRESH</string>
     <string name="sort_popular">Popular</string>
     <string name="sort_top_rated">Top Rated</string>
-    <string name="action">action</string>
+    <string name="overview_label">Overview: </string>
+    <string name="mark_label">Mark as Favorite</string>
 </resources>

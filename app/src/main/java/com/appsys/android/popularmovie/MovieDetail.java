@@ -34,7 +34,7 @@ public class MovieDetail extends AppCompatActivity {
             Movie m = i.getParcelableExtra(Intent.EXTRA_TEXT);
             if (m != null) {
                 mTitleTextView.setText(m.getTitle());
-                Picasso.with(this).load(m.getPoster()).placeholder(R.mipmap.ic_launcher).error(R.drawable.not_found).into(mPoster);
+                Picasso.with(this).load(m.getPoster()).placeholder(R.mipmap.ic_launcher).error(R.mipmap.not_found).into(mPoster);
                 mOverviewTextView.setText(m.getOverview());
                 mRatingTextView.setText("Rating: " + m.getRating() + "/10");
                 mReleaseTextView.setText("Release: " + m.getRelease());
