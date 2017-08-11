@@ -1,8 +1,15 @@
 <resources>
-    <string name="app_name">Movie Detail</string>
+    <string name="app_name">Movies</string>
     <string name="error_message">An error has occurred. Please try again by clicking REFRESH</string>
     <string name="sort_popular">Popular</string>
     <string name="sort_top_rated">Top Rated</string>
+    <string name="setting">Setting</string>
     <string name="overview_label">Overview: </string>
     <string name="mark_label">Mark as Favorite</string>
+    <string name="set_default">Set Default Key</string>
+    <string name="reviewer_placeholder">Author</string>
+    <string name="review_placeholder">review</string>
+    <string name="trailer_title_placeholder">Trailer</string>
+    <string name="trailers">Trailer</string>
+    <string name="reviews">Reviews</string>
 </resources>

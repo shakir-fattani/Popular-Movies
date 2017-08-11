@@ -2,15 +2,8 @@ package com.appsys.android.popularmovie.classes;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.util.Log;
 
-import com.appsys.android.popularmovie.NetworkUtils;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.ArrayList;
+import com.appsys.android.popularmovie.api.TheMovieDbApi;
 
 /**
  * Created by shakir on 8/2/2017.
@@ -86,8 +79,10 @@ public class Movie implements Parcelable {
     public String getTitle() {
         return mTitle;
     }
-    public String getPoster() { return NetworkUtils.THUMB_BASE_URL + mPoster; }
-    public String getBackdrop() { return NetworkUtils.THUMB_BASE_URL + mBackdrop; }
+    public String getPoster() { return TheMovieDbApi.THUMB_BASE_URL + mPoster; }
+    public String getBackdrop() { return TheMovieDbApi.THUMB_BASE_URL + mBackdrop; }
+    public String getPosterData() { return mPoster; }
+    public String getBackdropData() { return mBackdrop; }
     public String getOverview() {
         return mOverview;
     }
@@ -100,26 +95,4 @@ public class Movie implements Parcelable {
     public String getRelease() {
         return mRelease;
     }
-
-    public static Movie getByJSON(JSONObject movieJson) throws JSONException {
-        Movie m = null;
-        try {
-            m = new Movie(movieJson.getInt("id"), movieJson.getString("title"), movieJson.getString("poster_path"), movieJson.getString("backdrop_path"), movieJson.getString("overview"), movieJson.getString("vote_average"), movieJson.getString("original_language"), movieJson.getString("release_date"));
-        } catch (JSONException e) {
-            Log.d(TAG, e.getMessage());
-        }
-        return m;
-    }
-
-    public static ArrayList<Movie> getArrayByJSON(JSONArray jsonArray) throws JSONException {
-        ArrayList<Movie> m = new ArrayList<Movie>();
-        for (int i = 0; i < jsonArray.length(); i++) {
-            JSONObject jo = jsonArray.getJSONObject(i);
-            Movie tempM = getByJSON(jo);
-            if (tempM != null)
-                m.add(tempM);
-        }
-        return m;
-    }
-
 }

@@ -3,10 +3,22 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:title="@string/sort_popular"
         android:id="@+id/action_sort_popular"
-        app:showAsAction="ifRoom"
+        app:showAsAction="never"
         android:orderInCategory="1"/>
     <item android:title="@string/sort_top_rated"
         android:id="@+id/action_sort_top_rated"
-        app:showAsAction="ifRoom"
+        app:showAsAction="never"
         android:orderInCategory="2"/>
+    <item android:title="Favorite"
+        android:id="@+id/action_sort_favorite"
+        app:showAsAction="never"
+        android:orderInCategory="3"/>
+    <item android:title="Up Coming"
+        android:id="@+id/action_sort_upcoming"
+        app:showAsAction="never"
+        android:orderInCategory="3"/>
+    <item android:title="@string/setting"
+        android:id="@+id/action_setting"
+        app:showAsAction="never"
+        android:orderInCategory="4"/>
 </menu>
