@@ -47,8 +47,9 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     Toast mToast;
     boolean mPopular = true;
     boolean mFavorite = false;
-    MovieType mType = MovieType.Latest;
+    int mType = MovieType.Latest;
     String mErrorMessage = "";
+    private static ArrayList<Integer> mArrayList = new ArrayList<Integer>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,11 +84,13 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         mRecyclerView.setAdapter(mMovieAdapter);
         getLoaderManager().initLoader(AsyncLoaderMovie_ID, null, this);
 
-        if (savedInstanceState == null || !savedInstanceState.containsKey("Movie"))
+        if (savedInstanceState == null || !savedInstanceState.containsKey("Movie")) {
             loadMovies(1, MovieType.Upcoming);
-        else {
+            setTitle("Upcoming Movies");
+        } else {
+            // there is a already save movie data because of rotation
             mTotalItems = savedInstanceState.getInt("totalItems");
-            mType = MovieType.values[savedInstanceState.getInt("type")];
+            mType = savedInstanceState.getInt("type");
             mMovieAdapter.setMoviesData(savedInstanceState.<Movie>getParcelableArrayList("Movie"));
         }
         mRecyclerView.addOnScrollListener(mScrollListener);
@@ -97,22 +100,22 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         onSharedPreferenceChanged(sp, "Preference");
     }
 
-    private void loadMovies(int pageNo, MovieType type) {
+    private void loadMovies(int pageNo, int type) {
         if (mFavorite && pageNo > 1)
             return;
         mType = type;
 
         Bundle b = new Bundle();
-        b.putInt("type", type.ordinal());
+        b.putInt("type", type);
         b.putInt("Page", pageNo);
 
         LoaderManager loaderManager = getLoaderManager();
-        Loader<Movie[]> movieApi = loaderManager.getLoader(AsyncLoaderMovie_ID);
-        if (movieApi == null) {
-            loaderManager.initLoader(AsyncLoaderMovie_ID, b, this);
-        } else {
+//        Loader<Movie[]> movieApi = loaderManager.getLoader(AsyncLoaderMovie_ID);
+//        if (movieApi == null) {
+//            loaderManager.initLoader(AsyncLoaderMovie_ID, b, this);
+//        } else {
             loaderManager.restartLoader(AsyncLoaderMovie_ID, b, this);
-        }
+//        }
     }
 
     private int calculateNoOfColumns() {
@@ -151,22 +154,30 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         switch (item.getItemId()) {
             case R.id.action_sort_popular:
                 mPopular = true;
+                setTitle("Popular Movies");
                 mMovieAdapter.resetMovieList();
+                mArrayList.add(MovieType.Popular);
                 loadMovies(1, MovieType.Popular);
                 return true;
             case R.id.action_sort_top_rated:
                 mPopular = false;
+                setTitle("Top Rated Movies");
                 mMovieAdapter.resetMovieList();
+                mArrayList.add(MovieType.TopRate);
                 loadMovies(1, MovieType.TopRate);
                 return true;
             case R.id.action_sort_favorite:
                 mFavorite = true;
+                setTitle("Favorite Movies");
                 mMovieAdapter.resetMovieList();
+                mArrayList.add(MovieType.Favorite);
                 loadMovies(1, MovieType.Favorite);
                 return true;
             case R.id.action_sort_upcoming:
                 mFavorite = true;
+                setTitle("Upcoming Movies");
                 mMovieAdapter.resetMovieList();
+                mArrayList.add(MovieType.Upcoming);
                 loadMovies(1, MovieType.Upcoming);
                 return true;
             case R.id.action_setting:
@@ -176,6 +187,8 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         }
         return super.onOptionsItemSelected(item);
     }
+
+//    private
 
     private void setUI(ViewEnum e) {
         mProgressBar.setVisibility(View.INVISIBLE);
@@ -198,7 +211,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         outState.putParcelableArrayList("Movie", mMovieAdapter.getMoviesData());
-        outState.putInt("type", mType.ordinal());
+        outState.putInt("type", mType);
         outState.putInt("totalItems", mTotalItems);
         super.onSaveInstanceState(outState);
     }
@@ -219,13 +232,12 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
             @Override
             public ArrayList<Movie> loadInBackground() {
-                MovieType type = MovieType.values[bundle.getInt("type")];
+                int type = bundle.getInt("type");
 
                 if (type == MovieType.Favorite) {
                     MovieListHelper mlh = new MovieListHelper(MainActivity.this);
                     SQLiteDatabase db = mlh.getReadableDatabase();
-
-                    Cursor c = db.query(MovieListContract.MovieListEntry.TABLE_NAME, null, null, null, null, null, MovieListContract.MovieListEntry._ID);
+                    Cursor c = getContentResolver().query(MovieListContract.MovieListEntry.CONTENT_URI, null, null, null, MovieListContract.MovieListEntry._ID);
                     mTotalItems = c.getCount();
 
                     ArrayList<Movie> movieArrayList = new ArrayList<Movie>();
@@ -249,8 +261,6 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                     c.close();
                     return movieArrayList;
                 }
-//                if (bundle.getBoolean("favorite", false)) {
-//                }
 
                 int page = bundle.getInt("Page");
 
@@ -309,5 +319,12 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         if (key.equals("Preference"))
             TheMovieDbApi.getInstance().setApiKey(sharedPreferences.getString("Preference", ""));
+    }
+
+    @Override
+    public void onBackPressed() {
+
+
+//        super.onBackPressed();
     }
 }

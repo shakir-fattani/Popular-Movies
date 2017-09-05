@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
@@ -81,7 +82,7 @@ public class MovieDetail extends AppCompatActivity implements SharedPreferences.
             if (m != null) {
                 mMovie = m;
                 setTitle(m.getTitle());
-                Picasso.with(this).load(m.getPoster()).placeholder(R.mipmap.ic_launcher).error(R.mipmap.not_found).into(mPoster);
+                Picasso.with(this).load(m.getBackdrop()).placeholder(R.mipmap.ic_launcher).error(R.mipmap.not_found).into(mPoster);
                 mOverviewTextView.setText(m.getOverview());
                 mRatingTextView.setText("Rating: " + m.getRating() + "/10");
                 mReleaseTextView.setText("Release: " + m.getRelease());
@@ -126,7 +127,10 @@ public class MovieDetail extends AppCompatActivity implements SharedPreferences.
             fab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mDb.delete(MovieListContract.MovieListEntry.TABLE_NAME, MovieListContract.MovieListEntry.COLUMN_ID + "=" + m.getId(), null);
+                    String stringId = Integer.toString(m.getId());
+                    Uri uri = MovieListContract.MovieListEntry.CONTENT_URI;
+                    uri = uri.buildUpon().appendPath(stringId).build();
+                    getContentResolver().delete(uri, null, null);
                     setFavoriate(m);
                 }
             });
@@ -145,7 +149,7 @@ public class MovieDetail extends AppCompatActivity implements SharedPreferences.
                     cv.put(MovieListContract.MovieListEntry.COLUMN_RELEASE, m.getRelease());
                     cv.put(MovieListContract.MovieListEntry.COLUMN_LANGUAGE, m.getLanguage());
 
-                    mDb.insert(MovieListContract.MovieListEntry.TABLE_NAME, null, cv);
+                    Uri uri = getContentResolver().insert(MovieListContract.MovieListEntry.CONTENT_URI, cv);
                     setFavoriate(m);
                 }
             });

@@ -80,7 +80,7 @@ public class Movie implements Parcelable {
         return mTitle;
     }
     public String getPoster() { return TheMovieDbApi.THUMB_BASE_URL + mPoster; }
-    public String getBackdrop() { return TheMovieDbApi.THUMB_BASE_URL + mBackdrop; }
+    public String getBackdrop() { return TheMovieDbApi.POSTER_BASE_URL + mBackdrop; }
     public String getPosterData() { return mPoster; }
     public String getBackdropData() { return mBackdrop; }
     public String getOverview() {
