@@ -8,7 +8,8 @@ import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
-import android.support.annotation.NonNull;
+
+import androidx.annotation.NonNull;
 
 import static com.appsys.android.popularmovie.data.MovieListContract.MovieListEntry.CONTENT_URI;
 import static com.appsys.android.popularmovie.data.MovieListContract.MovieListEntry.TABLE_NAME;

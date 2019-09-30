@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <EditTextPreference
-        android:defaultValue=""
+        android:defaultValue="30b3a8db1e5ceee18bf172278839e30e"
         android:key="Preference"
         android:title="Api Key"
         />

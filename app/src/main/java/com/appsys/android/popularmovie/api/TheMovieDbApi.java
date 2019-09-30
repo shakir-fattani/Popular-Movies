@@ -1,8 +1,6 @@
 package com.appsys.android.popularmovie.api;
 
 import android.net.Uri;
-import android.support.v4.util.Pair;
-import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -14,7 +12,6 @@ import com.appsys.android.popularmovie.classes.MovieDbJSONException;
 import com.appsys.android.popularmovie.classes.MovieReview;
 import com.appsys.android.popularmovie.classes.MovieTrailer;
 import com.appsys.android.popularmovie.classes.SearchResult;
-//import com.appsys.android.popularmovie.classes.
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;

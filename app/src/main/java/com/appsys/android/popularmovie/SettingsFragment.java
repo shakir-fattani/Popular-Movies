@@ -1,7 +1,7 @@
 package com.appsys.android.popularmovie;
 
 import android.os.Bundle;
-import android.support.v7.preference.PreferenceFragmentCompat;
+import androidx.preference.PreferenceFragmentCompat;
 
 /**
  * Created by shakir on 8/7/2017.

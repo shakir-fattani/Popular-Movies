@@ -6,20 +6,20 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.NavUtils;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.preference.PreferenceManager;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.NavUtils;
+import androidx.preference.PreferenceManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.appsys.android.popularmovie.adapter.ReviewAdapter;
 import com.appsys.android.popularmovie.adapter.TrailerAdapter;
@@ -30,6 +30,7 @@ import com.appsys.android.popularmovie.classes.Movie;
 import com.appsys.android.popularmovie.classes.MovieTrailer;
 import com.appsys.android.popularmovie.data.MovieListContract;
 import com.appsys.android.popularmovie.data.MovieListHelper;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.squareup.picasso.Picasso;
 
 public class MovieDetail extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener, TrailerAdapter.TrailerAdapterOnClickHandler {
@@ -57,12 +58,12 @@ public class MovieDetail extends AppCompatActivity implements SharedPreferences.
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie_detail);
-        mReleaseTextView = (TextView) findViewById(R.id.detail_release);
-        mRatingTextView = (TextView) findViewById(R.id.rating);
-        mOverviewTextView = (TextView) findViewById(R.id.detail_overview);
-        mPoster = (ImageView) findViewById(R.id.expandedImage);
+        mReleaseTextView = findViewById(R.id.detail_release);
+        mRatingTextView =  findViewById(R.id.rating);
+        mOverviewTextView =  findViewById(R.id.detail_overview);
+        mPoster =  findViewById(R.id.expandedImage);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         toolbar.setNavigationIcon(R.mipmap.ic_toolbar_arrow);
@@ -121,7 +122,7 @@ public class MovieDetail extends AppCompatActivity implements SharedPreferences.
     private void setFavoriate(final Movie m) {
         Cursor c = mDb.query(MovieListContract.MovieListEntry.TABLE_NAME, null, MovieListContract.MovieListEntry.COLUMN_ID + "=" + m.getId(), null, null, null, MovieListContract.MovieListEntry.COLUMN_ID);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        FloatingActionButton fab = findViewById(R.id.fab);
         if (c.getCount() > 0) {
             fab.setImageResource(android.R.drawable.btn_star_big_on);
             fab.setOnClickListener(new View.OnClickListener() {
