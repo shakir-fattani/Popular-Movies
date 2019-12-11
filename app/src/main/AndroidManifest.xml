@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.appsys.android.popularmovie">
+    package="com.shakirfattani.course.movielisting">
 
     <uses-permission android:name="android.permission.INTERNET" />
 
@@ -12,7 +12,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".MainActivity"
+            android:name="com.appsys.android.popularmovie.MainActivity"
             android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -21,16 +21,16 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".MovieDetail"
-            android:parentActivityName=".MainActivity"
+            android:name="com.appsys.android.popularmovie.MovieDetail"
+            android:parentActivityName="com.appsys.android.popularmovie.MainActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.appsys.android.popularmovie.MainActivity" />
         </activity>
         <activity
-            android:name=".SettingActivity"
-            android:parentActivityName=".MainActivity">
+            android:name="com.appsys.android.popularmovie.SettingActivity"
+            android:parentActivityName="com.appsys.android.popularmovie.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.appsys.android.popularmovie.MainActivity" />

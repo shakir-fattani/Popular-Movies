@@ -7,8 +7,8 @@ import android.widget.ImageView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.appsys.android.popularmovie.R;
 import com.appsys.android.popularmovie.classes.Movie;
+import com.shakirfattani.course.movielisting.R;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -32,13 +32,13 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
         notifyDataSetChanged();
     }
 
+    public ArrayList<Movie> getMoviesData() {
+        return mMovies;
+    }
+
     public void setMoviesData(ArrayList<Movie> movieArray) {
         mMovies.addAll(movieArray);
         notifyDataSetChanged();
-    }
-
-    public ArrayList<Movie> getMoviesData() {
-        return mMovies;
     }
 
     @Override
@@ -58,12 +58,16 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
         return mMovies.size();
     }
 
+    public interface MovieAdapterOnClickHandler {
+        void onClick(Movie m);
+    }
+
     public class MovieAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public final ImageView mImageView;
 
         public MovieAdapterViewHolder(View view) {
             super(view);
-            mImageView = (ImageView) view.findViewById(R.id.image_thumb);
+            mImageView = view.findViewById(R.id.image_thumb);
             view.setOnClickListener(this);
         }
 
@@ -77,10 +81,6 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
             int adapterPosition = getAdapterPosition();
             Movie m = mMovies.get(adapterPosition);
             mOnClickHandler.onClick(m);
-       }
-    }
-
-    public interface MovieAdapterOnClickHandler {
-        void onClick(Movie m);
+        }
     }
 }

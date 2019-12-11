@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:title="@string/sort_popular"
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
         android:id="@+id/action_sort_popular"
-        app:showAsAction="never"
-        android:orderInCategory="1"/>
-    <item android:title="@string/sort_top_rated"
+        android:orderInCategory="1"
+        android:title="@string/sort_popular"
+        app:showAsAction="never" />
+    <item
         android:id="@+id/action_sort_top_rated"
-        app:showAsAction="never"
-        android:orderInCategory="2"/>
-    <item android:title="Favorite"
+        android:orderInCategory="2"
+        android:title="@string/sort_top_rated"
+        app:showAsAction="never" />
+    <item
         android:id="@+id/action_sort_favorite"
-        app:showAsAction="never"
-        android:orderInCategory="3"/>
-    <item android:title="Up Coming"
+        android:orderInCategory="3"
+        android:title="Favorite"
+        app:showAsAction="never" />
+    <item
         android:id="@+id/action_sort_upcoming"
-        app:showAsAction="never"
-        android:orderInCategory="3"/>
-    <item android:title="@string/setting"
-        android:id="@+id/action_setting"
-        app:showAsAction="never"
-        android:orderInCategory="4"/>
+        android:orderInCategory="3"
+        android:title="Up Coming"
+        app:showAsAction="never" />
 </menu>

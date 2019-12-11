@@ -7,8 +7,8 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.appsys.android.popularmovie.R;
 import com.appsys.android.popularmovie.classes.MovieReview;
+import com.shakirfattani.course.movielisting.R;
 
 import java.util.ArrayList;
 
@@ -29,13 +29,13 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.TrailerAda
         notifyDataSetChanged();
     }
 
+    public ArrayList<MovieReview> getMoviesData() {
+        return mMovies;
+    }
+
     public void setMoviesData(ArrayList<MovieReview> movieArray) {
         mMovies.addAll(movieArray);
         notifyDataSetChanged();
-    }
-
-    public ArrayList<MovieReview> getMoviesData() {
-        return mMovies;
     }
 
     @Override
@@ -61,8 +61,8 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.TrailerAda
 
         public TrailerAdapterViewHolder(View view) {
             super(view);
-            mAuthor = (TextView) view.findViewById(R.id.reviewer_name);
-            mReview = (TextView) view.findViewById(R.id.review);
+            mAuthor = view.findViewById(R.id.reviewer_name);
+            mReview = view.findViewById(R.id.review);
             view.setOnClickListener(this);
         }
 
@@ -75,6 +75,6 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.TrailerAda
         public void onClick(View view) {
             int adapterPosition = getAdapterPosition();
             MovieReview m = mMovies.get(adapterPosition);
-       }
+        }
     }
 }

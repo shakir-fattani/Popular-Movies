@@ -7,14 +7,17 @@ android {
     compileSdkVersion 29
     buildToolsVersion "29.0.2"
     defaultConfig {
-        applicationId "com.appsys.android.moviedetail"
+        applicationId "com.shakirfattani.course.movielisting"
         minSdkVersion 16
         targetSdkVersion 29
         versionCode 1
         versionName "1.0"
+        multiDexEnabled true
+        vectorDrawables.useSupportLibrary = true
     }
     buildTypes {
         release {
+            shrinkResources true
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
@@ -25,7 +28,7 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${kotlin_version}"
 
     implementation "androidx.appcompat:appcompat:1.1.0"
-    implementation "com.google.android.material:material:1.1.0-alpha10"
+    implementation "com.google.android.material:material:1.2.0-alpha02"
     implementation "androidx.preference:preference:1.1.0"
     implementation 'com.squareup.picasso:picasso:2.5.2'
 }

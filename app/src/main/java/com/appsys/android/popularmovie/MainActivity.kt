@@ -1,9 +1,6 @@
 package com.appsys.android.popularmovie
 
-import android.app.LoaderManager
-import android.content.AsyncTaskLoader
 import android.content.Intent
-import android.content.Loader
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
@@ -14,6 +11,9 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.loader.app.LoaderManager
+import androidx.loader.content.AsyncTaskLoader
+import androidx.loader.content.Loader
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -27,6 +27,7 @@ import com.appsys.android.popularmovie.classes.SearchResult
 import com.appsys.android.popularmovie.data.MovieListContract
 import com.appsys.android.popularmovie.data.MovieListHelper
 import com.appsys.android.popularmovie.view.EndlessRecyclerViewScrollListener
+import com.shakirfattani.course.movielisting.R
 import java.io.IOException
 import java.util.*
 
@@ -54,7 +55,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         val glm = GridLayoutManager(this, calculateNoOfColumns(), GridLayoutManager.VERTICAL, false)
 
         mScrollListener = object : EndlessRecyclerViewScrollListener(glm) {
-            override fun onLoadMore(page: Int, totalItemsCount: Int, view: RecyclerView) {
+            override fun onLoadMore(page: Int, totalItemsCount: Int, view: RecyclerView?) {
                 // Triggered only when new data needs to be appended to the list
                 // Add whatever code is needed to append new items to the bottom of the list
                 if (mTotalItems <= totalItemsCount)
@@ -72,7 +73,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         mMovieAdapter = MovieAdapter(this)
         mMovieAdapter?.moviesData = ArrayList()
         mRecyclerView?.adapter = mMovieAdapter
-        loaderManager.initLoader(AsyncLoaderMovie_ID, null, this)
+        LoaderManager.getInstance(this).initLoader(AsyncLoaderMovie_ID, null, this)
 
         if (savedInstanceState == null || !savedInstanceState.containsKey("Movie")) {
             loadMovies(1, MovieType.Upcoming)
@@ -99,12 +100,11 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         b.putInt("type", type)
         b.putInt("Page", pageNo)
 
-        val loaderManager = loaderManager
         //        Loader<Movie[]> movieApi = loaderManager.getLoader(AsyncLoaderMovie_ID);
         //        if (movieApi == null) {
         //            loaderManager.initLoader(AsyncLoaderMovie_ID, b, this);
         //        } else {
-        loaderManager.restartLoader(AsyncLoaderMovie_ID, b, this)
+        LoaderManager.getInstance(this).restartLoader(AsyncLoaderMovie_ID, b, this)
         //        }
     }
 
@@ -115,11 +115,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
         return (dpWidth / imageWidth).toInt()
     }
 
-    override fun onClick(m: Movie) {
-        val i = Intent(this, MovieDetail::class.java)
-        i.putExtra(Intent.EXTRA_TEXT, m)
-        startActivity(i)
-    }
+    override fun onClick(m: Movie) = startActivity(Intent(this, MovieDetail::class.java).putExtra(Intent.EXTRA_TEXT, m))
 
     fun showMessage(message: String?) {
         if (mToast != null)
@@ -170,11 +166,6 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                 loadMovies(1, MovieType.Upcoming)
                 return true
             }
-            R.id.action_setting -> {
-                val i = Intent(this, SettingActivity::class.java)
-                startActivity(i)
-                return true
-            }
         }
         return super.onOptionsItemSelected(item)
     }
@@ -218,25 +209,30 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                 val type = bundle!!.getInt("type")
 
                 if (type == MovieType.Favorite) {
-                    val mlh = MovieListHelper(this@MainActivity)
-                    val db = mlh.readableDatabase
                     val c = contentResolver.query(MovieListContract.MovieListEntry.CONTENT_URI, null, null, null, MovieListContract.MovieListEntry._ID)
                     mTotalItems = c!!.count
 
                     val movieArrayList = ArrayList<Movie>()
                     if (c.count > 0) {
+                        val idCol = c.getColumnIndex(MovieListContract.MovieListEntry.COLUMN_ID)
+                        val titleCol = c.getColumnIndex(MovieListContract.MovieListEntry.COLUMN_TITLE)
+                        val posterCol = c.getColumnIndex(MovieListContract.MovieListEntry.COLUMN_POSTER)
+                        val backdropCol = c.getColumnIndex(MovieListContract.MovieListEntry.COLUMN_BACKDROP)
+                        val overviewCol = c.getColumnIndex(MovieListContract.MovieListEntry.COLUMN_OVERVIEW)
+                        val ratingCol = c.getColumnIndex(MovieListContract.MovieListEntry.COLUMN_RATING)
+                        val langCol = c.getColumnIndex(MovieListContract.MovieListEntry.COLUMN_LANGUAGE)
+                        val releaseCol = c.getColumnIndex(MovieListContract.MovieListEntry.COLUMN_RELEASE)
                         while (c.moveToNext()) {
-                            val movie = Movie(
-                                    c.getInt(c.getColumnIndex(MovieListContract.MovieListEntry.COLUMN_ID)),
-                                    c.getString(c.getColumnIndex(MovieListContract.MovieListEntry.COLUMN_TITLE)),
-                                    c.getString(c.getColumnIndex(MovieListContract.MovieListEntry.COLUMN_POSTER)),
-                                    c.getString(c.getColumnIndex(MovieListContract.MovieListEntry.COLUMN_BACKDROP)),
-                                    c.getString(c.getColumnIndex(MovieListContract.MovieListEntry.COLUMN_OVERVIEW)),
-                                    c.getString(c.getColumnIndex(MovieListContract.MovieListEntry.COLUMN_RATING)),
-                                    c.getString(c.getColumnIndex(MovieListContract.MovieListEntry.COLUMN_LANGUAGE)),
-                                    c.getString(c.getColumnIndex(MovieListContract.MovieListEntry.COLUMN_RELEASE))
-                            )
-                            movieArrayList.add(movie)
+                            movieArrayList.add(Movie(
+                                    c.getInt(idCol),
+                                    c.getString(titleCol),
+                                    c.getString(posterCol),
+                                    c.getString(backdropCol),
+                                    c.getString(overviewCol),
+                                    c.getString(ratingCol),
+                                    c.getString(langCol),
+                                    c.getString(releaseCol)
+                            ))
                         }
                     } else {
                         mErrorMessage = "There is no local data yet"
@@ -248,7 +244,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
                 val page = bundle.getInt("Page")
 
                 try {
-                    val api = TheMovieDbApi.getInstance()
+                    val api = TheMovieDbApi.instance
 
                     val srm: SearchResult<Movie>
                     if (type == MovieType.Popular)
@@ -289,7 +285,7 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             setUI(ViewEnum.Data)
             mMovieAdapter?.moviesData = movies
         }
-        loaderManager.destroyLoader(AsyncLoaderMovie_ID)
+        LoaderManager.getInstance(this).destroyLoader(AsyncLoaderMovie_ID)
     }
 
     override fun onLoaderReset(loader: Loader<ArrayList<Movie>>) {
@@ -298,18 +294,11 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
         if (key == "Preference")
-            TheMovieDbApi.getInstance().setApiKey(sharedPreferences.getString("Preference", ""))
-    }
-
-    override fun onBackPressed() {
-
-
-        //        super.onBackPressed();
+            TheMovieDbApi.instance.apikey = sharedPreferences.getString("Preference", "479407e3eb2f80c4ee8f711ffaa9cb63") ?: "479407e3eb2f80c4ee8f711ffaa9cb63"
     }
 
     companion object {
-
-        internal val AsyncLoaderMovie_ID = 22
+        const val AsyncLoaderMovie_ID = 22
         private val mArrayList = ArrayList<Int>()
     }
 }
