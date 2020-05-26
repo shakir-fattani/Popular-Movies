@@ -161,7 +161,7 @@ class TheMovieDbApi private constructor() {
     companion object {
         val instance = TheMovieDbApi()
         private val TAG = TheMovieDbApi::class.java.simpleName
-        private const val MOVIE_POSTER_BASE_URL = "http://image.tmdb.org/t/p/"
+        private const val MOVIE_POSTER_BASE_URL = "https://image.tmdb.org/t/p/"
         const val THUMB_BASE_URL = "$MOVIE_POSTER_BASE_URL/w342"
         const val POSTER_BASE_URL = "$MOVIE_POSTER_BASE_URL/w780"
 

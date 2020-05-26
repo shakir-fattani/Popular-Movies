@@ -13,8 +13,7 @@ import java.util.*
 /**
  * Created by shakir on 8/2/2017.
  */
-class TrailerAdapter(private val mOnClickHandler: TrailerAdapterOnClickHandler) : RecyclerView.Adapter<TrailerAdapter.TrailerAdapterViewHolder>() {
-    val moviesData = ArrayList<MovieTrailer>()
+class TrailerAdapter(private val mOnClickHandler: TrailerAdapterOnClickHandler, val moviesData: ArrayList<MovieTrailer> = arrayListOf()) : RecyclerView.Adapter<TrailerAdapter.TrailerAdapterViewHolder>() {
 
     fun resetMovieList() {
         moviesData.clear()

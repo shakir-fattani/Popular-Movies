@@ -3,12 +3,9 @@ package com.appsys.android.popularmovie
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.ProgressBar
-import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.loader.app.LoaderManager
@@ -25,17 +22,14 @@ import com.appsys.android.popularmovie.classes.Movie
 import com.appsys.android.popularmovie.classes.MovieDbException
 import com.appsys.android.popularmovie.classes.SearchResult
 import com.appsys.android.popularmovie.data.MovieListContract
-import com.appsys.android.popularmovie.data.MovieListHelper
 import com.appsys.android.popularmovie.view.EndlessRecyclerViewScrollListener
 import com.shakirfattani.course.movielisting.R
+import kotlinx.android.synthetic.main.activity_main.*
 import java.io.IOException
 import java.util.*
 
 class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceChangeListener, MovieAdapter.MovieAdapterOnClickHandler, LoaderManager.LoaderCallbacks<ArrayList<Movie>> {
-    var mRecyclerView: RecyclerView? = null
     var mMovieAdapter: MovieAdapter? = null
-    var mErrorTextView: TextView? = null
-    var mProgressBar: ProgressBar? = null
     var mTotalItems = 0
     var mScrollListener: EndlessRecyclerViewScrollListener? = null
     var mToast: Toast? = null
@@ -47,10 +41,6 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-        mRecyclerView = findViewById<View>(R.id.recycler_view) as RecyclerView
-        mErrorTextView = findViewById<View>(R.id.error_view) as TextView
-        mProgressBar = findViewById<View>(R.id.progress_view) as ProgressBar
 
         val glm = GridLayoutManager(this, calculateNoOfColumns(), GridLayoutManager.VERTICAL, false)
 
@@ -68,11 +58,10 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             }
         }
 
-        mRecyclerView?.layoutManager = glm
+        recycler_view.layoutManager = glm
 
         mMovieAdapter = MovieAdapter(this)
-        mMovieAdapter?.moviesData = ArrayList()
-        mRecyclerView?.adapter = mMovieAdapter
+        recycler_view.adapter = mMovieAdapter
         LoaderManager.getInstance(this).initLoader(AsyncLoaderMovie_ID, null, this)
 
         if (savedInstanceState == null || !savedInstanceState.containsKey("Movie")) {
@@ -82,13 +71,14 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             // there is a already save movie data because of rotation
             mTotalItems = savedInstanceState.getInt("totalItems")
             mType = savedInstanceState.getInt("type")
-            mMovieAdapter?.moviesData = savedInstanceState.getParcelableArrayList("Movie")
+            mMovieAdapter?.moviesData = savedInstanceState.getParcelableArrayList<Movie>("Movie")!!
         }
-        mRecyclerView?.addOnScrollListener(mScrollListener!!)
 
-        val sp = PreferenceManager.getDefaultSharedPreferences(this)
-        sp.registerOnSharedPreferenceChangeListener(this)
-        onSharedPreferenceChanged(sp, "Preference")
+        recycler_view.addOnScrollListener(mScrollListener!!)
+
+        onSharedPreferenceChanged(PreferenceManager.getDefaultSharedPreferences(this).apply {
+            registerOnSharedPreferenceChangeListener(this@MainActivity)
+        }, "Preference")
     }
 
     private fun loadMovies(pageNo: Int, type: Int) {
@@ -96,22 +86,16 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
             return
         mType = type
 
-        val b = Bundle()
-        b.putInt("type", type)
-        b.putInt("Page", pageNo)
-
-        //        Loader<Movie[]> movieApi = loaderManager.getLoader(AsyncLoaderMovie_ID);
-        //        if (movieApi == null) {
-        //            loaderManager.initLoader(AsyncLoaderMovie_ID, b, this);
-        //        } else {
-        LoaderManager.getInstance(this).restartLoader(AsyncLoaderMovie_ID, b, this)
-        //        }
+        LoaderManager.getInstance(this).restartLoader(AsyncLoaderMovie_ID, Bundle().apply {
+            putInt("type", type)
+            putInt("Page", pageNo)
+        }, this)
     }
 
     private fun calculateNoOfColumns(): Int {
         val dm = resources.displayMetrics
         val dpWidth = dm.widthPixels / dm.density
-        val imageWidth = 180
+        val imageWidth = 160
         return (dpWidth / imageWidth).toInt()
     }
 
@@ -173,28 +157,26 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     //    private
 
     private fun setUI(e: ViewEnum) {
-        mProgressBar?.visibility = View.INVISIBLE
-        mErrorTextView?.visibility = View.INVISIBLE
+        progress_view.visibility = View.INVISIBLE
+        error_view.visibility = View.INVISIBLE
 
         when (e) {
-            ViewEnum.Data -> mRecyclerView?.visibility = View.VISIBLE
-            ViewEnum.Progress -> mProgressBar?.visibility = View.VISIBLE
+            ViewEnum.Data -> recycler_view.visibility = View.VISIBLE
+            ViewEnum.Progress -> progress_view.visibility = View.VISIBLE
             else -> {
-                mRecyclerView?.visibility = View.INVISIBLE
-                mErrorTextView?.visibility = View.VISIBLE
+                recycler_view.visibility = View.INVISIBLE
+                error_view.visibility = View.VISIBLE
             }
         }
     }
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        outState.putParcelableArrayList("Movie", mMovieAdapter?.moviesData)
-        outState.putInt("type", mType)
-        outState.putInt("totalItems", mTotalItems)
-        super.onSaveInstanceState(outState)
-    }
+    override fun onSaveInstanceState(outState: Bundle) = super.onSaveInstanceState(outState.apply {
+        putParcelableArrayList("Movie", mMovieAdapter?.moviesData)
+        putInt("type", mType)
+        putInt("totalItems", mTotalItems)
+    })
 
     override fun onCreateLoader(i: Int, bundle: Bundle?): Loader<ArrayList<Movie>> {
-        Log.d("mainactivity", "console.log ----- oncreate")
         return object : AsyncTaskLoader<ArrayList<Movie>>(this) {
             override fun onStartLoading() {
                 super.onStartLoading()
@@ -294,7 +276,8 @@ class MainActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
         if (key == "Preference")
-            TheMovieDbApi.instance.apikey = sharedPreferences.getString("Preference", "479407e3eb2f80c4ee8f711ffaa9cb63") ?: "479407e3eb2f80c4ee8f711ffaa9cb63"
+            TheMovieDbApi.instance.apikey = sharedPreferences.getString("Preference", "479407e3eb2f80c4ee8f711ffaa9cb63")
+                    ?: "479407e3eb2f80c4ee8f711ffaa9cb63"
     }
 
     companion object {

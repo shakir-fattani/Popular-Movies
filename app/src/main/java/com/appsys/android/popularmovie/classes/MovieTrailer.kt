@@ -9,50 +9,29 @@ import com.appsys.android.popularmovie.api.TheMovieDbApi.Companion.getYouTubeVid
 /**
  * Created by shakir on 8/8/2017.
  */
-class MovieTrailer : Parcelable {
-    var movieId: Int
-        private set
-    private var mKey: String?
-    var title: String?
-        private set
-    private var mSite: String?
-    private var mType: String?
+class MovieTrailer(val movieId: Int, val key: String?, val title: String?, val site: String?, val type: String?) : Parcelable {
 
-    constructor(movieId: Int, key: String?, title: String?, site: String?, type: String?) {
-        this.movieId = movieId
-        mKey = key
-        this.title = title
-        mSite = site
-        mType = type
-    }
-
-    constructor(parcel: Parcel) {
-        movieId = parcel.readInt()
-        mKey = parcel.readString()
-        title = parcel.readString()
-        mSite = parcel.readString()
-        mType = parcel.readString()
-    }
+    constructor(parcel: Parcel) : this(parcel.readInt(), parcel.readString(), parcel.readString(), parcel.readString(), parcel.readString())
 
     override fun describeContents() = 0
 
     override fun writeToParcel(parcel: Parcel, i: Int) {
         parcel.writeInt(movieId)
-        parcel.writeString(mKey)
+        parcel.writeString(key)
         parcel.writeString(title)
-        parcel.writeString(mSite)
-        parcel.writeString(mType)
+        parcel.writeString(site)
+        parcel.writeString(type)
     }
 
     val imageUrl: Uri
-        get() = getYouTubeImagePath(mKey)
+        get() = getYouTubeImagePath(key)
 
     val videoUrl: Uri
-        get() = getYouTubeVideoPath(mKey)
+        get() = getYouTubeVideoPath(key)
 
     companion object CREATOR : Parcelable.Creator<MovieTrailer> {
         override fun createFromParcel(parcel: Parcel) = MovieTrailer(parcel)
 
-        override fun newArray(i: Int): Array<MovieTrailer?> = arrayOfNulls<MovieTrailer>(i)
+        override fun newArray(i: Int) = arrayOfNulls<MovieTrailer>(i)
     }
 }

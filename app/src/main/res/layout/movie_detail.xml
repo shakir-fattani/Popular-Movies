@@ -7,34 +7,39 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.appsys.android.popularmovie.MovieDetail"
     tools:showIn="@layout/activity_movie_detail">
-    <LinearLayout android:layout_width="match_parent"
-        android:orientation="vertical"
-        android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:cardElevation="8dp"
             app:cardUseCompatPadding="true">
+
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_margin="20dp"
                 android:orientation="vertical">
-                <TextView
+
+                <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/detail_release"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="#666"
-                    android:textSize="22sp" />
-                <TextView
+                    android:textAppearance="?attr/textAppearanceHeadline6" />
+
+                <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/rating"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="#000"
-                    android:textSize="22sp"
+                    android:textAppearance="?attr/textAppearanceBody1"
                     android:visibility="visible" />
             </LinearLayout>
         </androidx.cardview.widget.CardView>
+
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -47,22 +52,22 @@
                 android:orientation="vertical"
                 android:padding="3dp">
 
-                <TextView
+                <com.google.android.material.textview.MaterialTextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/overview_label"
                     android:textColor="@color/colorPrimary"
-                    android:textSize="18sp" />
+                    android:textAppearance="?attr/textAppearanceHeadline6" />
 
-                <TextView
+                <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/detail_overview"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="3dp"
-                    android:textColor="#000"
-                    android:textSize="18sp" />
+                    android:textAppearance="?attr/textAppearanceBody2"/>
             </LinearLayout>
         </androidx.cardview.widget.CardView>
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/detail_recycle"
             android:layout_width="match_parent"

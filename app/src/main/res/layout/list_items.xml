@@ -9,6 +9,7 @@
         android:id="@+id/image_thumb"
         android:layout_margin="5dp"
         android:contentDescription="extra"
+        android:scaleType="fitXY"
         android:layout_width="match_parent"
-        android:layout_height="260dp" />
+        android:layout_height="230dp" />
 </androidx.cardview.widget.CardView>
